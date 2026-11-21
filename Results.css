@@ -1,0 +1,190 @@
+/* MAIN RESULTS */
+
+.results-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 30px;
+  width: 100%;
+}
+
+/* MATCH SCORE CARD */
+
+.results-preview .result-score {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #244bc5, #647df0);
+  color: #ffffff !important;
+  padding: 35px 25px;
+  border-radius: 22px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(49, 87, 213, 0.2);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  min-height: 280px;
+}
+
+.results-preview .result-score > span {
+  color: #ffffff !important;
+  font-size: 19px;
+  font-weight: 700;
+  opacity: 1 !important;
+}
+
+/* CIRCULAR PROGRESS */
+
+.score-circle {
+  width: 155px;
+  height: 155px;
+  border-radius: 50%;
+
+  background: conic-gradient(
+    #ffffff var(--score),
+    rgba(255, 255, 255, 0.25) var(--score)
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+}
+
+.score-circle-inner {
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+
+  background: #3157d5;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-circle-inner strong {
+  color: #ffffff !important;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.score-circle-inner small {
+  color: #ffffff !important;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.results-preview .result-score p {
+  color: #ffffff !important;
+  font-size: 14px;
+  opacity: 1 !important;
+}
+
+/* RESULT CARDS */
+
+.results-preview .result-item {
+  background: #ffffff;
+  padding: 28px;
+  border: 1px solid #e8edf7;
+  border-radius: 20px;
+
+  box-shadow: 0 8px 25px rgba(30, 50, 90, 0.06);
+
+  transition: transform 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.results-preview .result-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(30, 50, 90, 0.1);
+}
+
+/* HEADINGS */
+
+.results-preview .result-item h3 {
+  color: #172554 !important;
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+/* SKILL TAGS */
+
+.results-preview .result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.results-preview .result-tags span {
+  background: #edf2ff;
+  color: #3157d5 !important;
+  padding: 9px 15px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* TEXT */
+
+.results-preview .result-item p {
+  color: #718096 !important;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.results-preview .result-item ul {
+  padding-left: 20px;
+  color: #596579 !important;
+}
+
+.results-preview .result-item li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 900px) {
+  .results-preview {
+    gap: 18px;
+  }
+
+  .results-preview .result-item {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 650px) {
+  .results-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .results-preview .result-score {
+    grid-column: auto;
+    min-height: 260px;
+  }
+
+  .score-circle {
+    width: 140px;
+    height: 140px;
+  }
+
+  .score-circle-inner {
+    width: 112px;
+    height: 112px;
+  }
+
+  .score-circle-inner strong {
+    font-size: 30px;
+  }
+
+  .results-preview .result-item {
+    padding: 22px;
+  }
+}
