@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import "./App.css";
@@ -8,6 +7,7 @@ import Register from "./pages/Register";
 import Results from "./components/Results";
 
 const API_URL = "http://localhost:5000/analyze";
+const BACKEND_URL = "http://localhost:5000";
 
 function App() {
   const [file, setFile] = useState(null);
@@ -25,12 +25,24 @@ function App() {
   const [profileMessage, setProfileMessage] = useState("");
   const [profileError, setProfileError] = useState("");
 
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [photoLoading, setPhotoLoading] = useState(false);
+  const [photoMessage, setPhotoMessage] = useState("");
+  const [photoError, setPhotoError] = useState("");
+
   const currentPath = window.location.pathname;
 
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch("http://localhost:5000/me", {
+        const response = await fetch(`${BACKEND_URL}/me`, {
           method: "GET",
           credentials: "include"
         });
@@ -53,9 +65,130 @@ function App() {
     checkSession();
   }, []);
 
+  // Upload Profile Photo
+  const handlePhotoUpload = async (event) => {
+    const selectedPhoto = event.target.files[0];
+
+    if (!selectedPhoto) return;
+
+    setPhotoMessage("");
+    setPhotoError("");
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if (!allowedTypes.includes(selectedPhoto.type)) {
+      setPhotoError("Please select a JPG, PNG or WEBP image.");
+      event.target.value = "";
+      return;
+    }
+
+    if (selectedPhoto.size > 2 * 1024 * 1024) {
+      setPhotoError("Photo must be under 2 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("photo", selectedPhoto);
+
+    setPhotoLoading(true);
+
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/upload-profile-photo`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Photo upload failed.");
+      }
+
+      setUser((previousUser) => ({
+        ...previousUser,
+        profile_photo: data.photo_url
+      }));
+
+      setPhotoMessage(
+        data.message || "Profile photo updated successfully!"
+      );
+
+    } catch (err) {
+      console.error("Photo Upload Error:", err);
+
+      setPhotoError(
+        err.message === "Failed to fetch"
+          ? "Cannot connect to the backend."
+          : err.message
+      );
+    } finally {
+      setPhotoLoading(false);
+      event.target.value = "";
+    }
+  };
+
+  // Remove Profile Photo
+  const handleRemovePhoto = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to remove your profile photo?"
+    );
+
+    if (!confirmed) return;
+
+    setPhotoLoading(true);
+    setPhotoMessage("");
+    setPhotoError("");
+
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/remove-profile-photo`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Could not remove photo.");
+      }
+
+      setUser((previousUser) => ({
+        ...previousUser,
+        profile_photo: null
+      }));
+
+      setPhotoMessage(
+        data.message || "Profile photo removed successfully!"
+      );
+
+    } catch (err) {
+      console.error("Photo Removal Error:", err);
+
+      setPhotoError(
+        err.message === "Failed to fetch"
+          ? "Cannot connect to the backend."
+          : err.message
+      );
+    } finally {
+      setPhotoLoading(false);
+    }
+  };
+
+  // Logout
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:5000/logout", {
+      const response = await fetch(`${BACKEND_URL}/logout`, {
         method: "POST",
         credentials: "include"
       });
@@ -74,6 +207,7 @@ function App() {
     }
   };
 
+  // Edit Profile
   const handleEditProfile = () => {
     setUpdatedName(user?.name || "");
     setProfileMessage("");
@@ -88,6 +222,7 @@ function App() {
     setProfileError("");
   };
 
+  // Save Profile
   const handleSaveProfile = async (event) => {
     event.preventDefault();
 
@@ -109,7 +244,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/update-profile",
+        `${BACKEND_URL}/update-profile`,
         {
           method: "PUT",
           headers: {
@@ -126,7 +261,11 @@ function App() {
         throw new Error(data.error || "Profile update failed.");
       }
 
-      setUser(data.user);
+      setUser((previousUser) => ({
+        ...previousUser,
+        ...data.user
+      }));
+
       setUpdatedName(data.user.name);
       setEditingProfile(false);
       setProfileMessage("Profile updated successfully!");
@@ -141,6 +280,83 @@ function App() {
       );
     } finally {
       setProfileLoading(false);
+    }
+  };
+
+  // Change Password
+  const handleChangePassword = async (event) => {
+    event.preventDefault();
+
+    setPasswordError("");
+    setPasswordMessage("");
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError("Please fill in all password fields.");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError("New password must be at least 8 characters.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError(
+        "New password and confirm password do not match."
+      );
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      setPasswordError(
+        "New password must be different from current password."
+      );
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/change-password`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            current_password: currentPassword,
+            new_password: newPassword
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Password change failed.");
+      }
+
+      setPasswordMessage(
+        data.message || "Password changed successfully!"
+      );
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setShowPasswordForm(false);
+
+    } catch (err) {
+      console.error("Change Password Error:", err);
+
+      setPasswordError(
+        err.message === "Failed to fetch"
+          ? "Cannot connect to the backend."
+          : err.message
+      );
+    } finally {
+      setPasswordLoading(false);
     }
   };
 
@@ -161,6 +377,7 @@ function App() {
     return null;
   }
 
+  // Resume File Selection
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
 
@@ -183,6 +400,7 @@ function App() {
     setFile(selectedFile);
   };
 
+  // Analyze Resume
   const analyzeResume = async () => {
     setError("");
     setResult(null);
@@ -236,6 +454,7 @@ function App() {
     }
   };
 
+  // Improvement Suggestions
   const getSuggestions = () => {
     if (!result) return [];
 
@@ -290,6 +509,7 @@ function App() {
     return suggestions;
   };
 
+  // Download PDF Report
   const downloadReport = () => {
     if (!result) return;
 
@@ -397,15 +617,67 @@ function App() {
         </div>
       </nav>
 
-      {/* USER PROFILE SECTION */}
+      {/* Profile Section */}
       <section className="profile-section">
         <div className="profile-card">
 
-          <div className="profile-avatar">
-            {user?.name?.charAt(0).toUpperCase() || "U"}
+          <div className="profile-photo-area">
+
+            <div className="profile-avatar">
+              {user?.profile_photo ? (
+                <img
+                  src={user.profile_photo}
+                  alt="Profile"
+                  className="profile-photo-image"
+                />
+              ) : (
+                user?.name?.charAt(0).toUpperCase() || "U"
+              )}
+            </div>
+
+            <label className="photo-upload-button">
+              {photoLoading
+                ? "Please wait..."
+                : user?.profile_photo
+                  ? "Change Photo"
+                  : "Upload Photo"}
+
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handlePhotoUpload}
+                disabled={photoLoading}
+                hidden
+              />
+            </label>
+
+            {user?.profile_photo && (
+              <button
+                type="button"
+                className="remove-photo-button"
+                onClick={handleRemovePhoto}
+                disabled={photoLoading}
+              >
+                {photoLoading ? "Please wait..." : "Remove Photo"}
+              </button>
+            )}
+
+            {photoMessage && (
+              <p className="profile-success-message">
+                {photoMessage}
+              </p>
+            )}
+
+            {photoError && (
+              <p className="profile-error-message">
+                {photoError}
+              </p>
+            )}
+
           </div>
 
           <div className="profile-info">
+
             <span className="profile-label">MY ACCOUNT</span>
 
             <h2>{user?.name || "User"}</h2>
@@ -431,7 +703,9 @@ function App() {
                 className="profile-edit-form"
                 onSubmit={handleSaveProfile}
               >
-                <label htmlFor="updatedName">Change Your Name</label>
+                <label htmlFor="updatedName">
+                  Change Your Name
+                </label>
 
                 <input
                   id="updatedName"
@@ -481,10 +755,110 @@ function App() {
               </button>
             )}
 
+            {passwordMessage && (
+              <p className="password-success-message">
+                {passwordMessage}
+              </p>
+            )}
+
+            <button
+              type="button"
+              className="change-password-button"
+              onClick={() => {
+                setShowPasswordForm(!showPasswordForm);
+                setPasswordError("");
+                setPasswordMessage("");
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+              }}
+            >
+              {showPasswordForm
+                ? "Cancel Password Change"
+                : "Change Password"}
+            </button>
+
+            {showPasswordForm && (
+              <form
+                className="change-password-form"
+                onSubmit={handleChangePassword}
+              >
+                <label htmlFor="currentPassword">
+                  Current Password
+                </label>
+
+                <input
+                  id="currentPassword"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(event) => {
+                    setCurrentPassword(event.target.value);
+                    setPasswordError("");
+                  }}
+                  placeholder="Enter current password"
+                  autoComplete="current-password"
+                  required
+                />
+
+                <label htmlFor="newPassword">
+                  New Password
+                </label>
+
+                <input
+                  id="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(event) => {
+                    setNewPassword(event.target.value);
+                    setPasswordError("");
+                  }}
+                  placeholder="At least 8 characters"
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+
+                <label htmlFor="confirmPassword">
+                  Confirm New Password
+                </label>
+
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(event) => {
+                    setConfirmPassword(event.target.value);
+                    setPasswordError("");
+                  }}
+                  placeholder="Re-enter new password"
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+
+                {passwordError && (
+                  <p className="password-error-message" role="alert">
+                    {passwordError}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  className="password-save-button"
+                  disabled={passwordLoading}
+                >
+                  {passwordLoading
+                    ? "Updating..."
+                    : "Update Password"}
+                </button>
+              </form>
+            )}
+
           </div>
         </div>
       </section>
 
+      {/* Hero Section */}
       <section className="hero">
         <h1>Analyze Your Resume with AI</h1>
 
@@ -498,6 +872,7 @@ function App() {
         </a>
       </section>
 
+      {/* Resume Analyzer Section */}
       <main id="analyzer" className="analyzer-dashboard">
 
         <div className="dashboard-heading">
