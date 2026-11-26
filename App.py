@@ -1,6 +1,7 @@
 import os
 import re
 import uuid
+import io
 
 import mysql.connector
 
@@ -13,6 +14,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from PyPDF2 import PdfReader
 from docx import Document
+
+from flask import send_from_directory
+from PIL import Image
 
 
 # Load Environment Variables
@@ -34,6 +38,11 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+PROFILE_FOLDER = "profile_uploads"
+
+app.config["PROFILE_FOLDER"] = PROFILE_FOLDER
+
+os.makedirs(PROFILE_FOLDER, exist_ok=True) 
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
@@ -77,6 +86,16 @@ def create_users_table():
             )
         """)
 
+        cursor.execute(
+            "SHOW COLUMNS FROM users LIKE 'profile_photo'"
+        )
+
+        if not cursor.fetchone():
+            cursor.execute("""
+                ALTER TABLE users
+                ADD COLUMN profile_photo VARCHAR(255) NULL
+            """)
+
         connection.commit()
 
     finally:
@@ -85,7 +104,6 @@ def create_users_table():
 
         if connection and connection.is_connected():
             connection.close()
-
 
 # Database Connection Test
 @app.route("/db-test", methods=["GET"])
@@ -255,22 +273,60 @@ def login():
             connection.close()
 
 
-# Current User / Profile API
 @app.route("/me", methods=["GET"])
 def current_user():
+
     if "user_id" not in session:
         return jsonify({
             "error": "Please login first"
         }), 401
 
-    return jsonify({
-        "status": "success",
-        "user": {
-            "id": session["user_id"],
-            "name": session.get("user_name"),
-            "email": session.get("user_email")
-        }
-    }), 200
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT id, name, email, profile_photo FROM users WHERE id = %s",
+            (session["user_id"],)
+        )
+
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        photo_url = None
+
+        if user["profile_photo"]:
+            photo_url = (
+                f"http://localhost:5000/profile-photos/"
+                f"{user['profile_photo']}"
+            )
+
+        return jsonify({
+            "status": "success",
+            "user": {
+                "id": user["id"],
+                "name": user["name"],
+                "email": user["email"],
+                "profile_photo": photo_url
+            }
+        }), 200
+
+    except Exception:
+        app.logger.exception("Could not fetch user profile")
+        return jsonify({"error": "Could not load profile"}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if connection and connection.is_connected():
+            connection.close()
+
 
     # Update User Profile API
 @app.route("/update-profile", methods=["PUT"])
@@ -339,8 +395,226 @@ def update_profile():
 
         if connection and connection.is_connected():
             connection.close()
+@app.route("/change-password", methods=["PUT"])
+def change_password():
+    if "user_id" not in session:
+        return jsonify({
+            "error": "Please login first"
+        }), 401
+
+    data = request.get_json()
+
+    current_password = data.get("current_password", "")
+    new_password = data.get("new_password", "")
+
+    if not current_password or not new_password:
+        return jsonify({
+            "error": "All fields are required"
+        }), 400
+
+    if len(new_password) < 8:
+        return jsonify({
+            "error": "New password must be at least 8 characters"
+        }), 400
+
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT password FROM users WHERE id = %s",
+            (session["user_id"],)
+        )
+
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({
+                "error": "User not found"
+            }), 404
+
+        if not check_password_hash(
+            user["password"], current_password
+        ):
+            return jsonify({
+                "error": "Current password is incorrect"
+            }), 401
+
+        hashed_password = generate_password_hash(new_password)
+
+        cursor.execute(
+            "UPDATE users SET password = %s WHERE id = %s",
+            (hashed_password, session["user_id"])
+        )
+
+        connection.commit()
+
+        return jsonify({
+            "message": "Password changed successfully!",
+            "status": "success"
+        }), 200
+
+    except Exception:
+        app.logger.exception("Password change failed")
+        return jsonify({
+            "error": "Password change failed"
+        }), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()
+            # Profile Photo Upload API
+@app.route("/upload-profile-photo", methods=["POST"])
+def upload_profile_photo():
+
+    if "user_id" not in session:
+        return jsonify({"error": "Please login first"}), 401
+
+    if "photo" not in request.files:
+        return jsonify({"error": "No photo selected"}), 400
+
+    photo = request.files["photo"]
+
+    if photo.filename == "":
+        return jsonify({"error": "No photo selected"}), 400
+
+    image_data = photo.read()
+
+    if len(image_data) > 2 * 1024 * 1024:
+        return jsonify({"error": "Photo must be under 2 MB"}), 400
+
+    try:
+        image = Image.open(io.BytesIO(image_data))
+
+        if image.format not in ["JPEG", "PNG", "WEBP"]:
+            return jsonify({
+                "error": "Only JPG, PNG and WEBP images are allowed"
+            }), 400
+
+        image.verify()
+
+        extension = {
+            "JPEG": "jpg",
+            "PNG": "png",
+            "WEBP": "webp"
+        }[image.format]
+
+        filename = str(uuid.uuid4()) + "." + extension
+        filepath = os.path.join(PROFILE_FOLDER, filename)
+
+        image = Image.open(io.BytesIO(image_data))
+        image.save(filepath)
+
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT profile_photo FROM users WHERE id = %s",
+            (session["user_id"],)
+        )
+        user = cursor.fetchone()
+
+        cursor.execute(
+            "UPDATE users SET profile_photo = %s WHERE id = %s",
+            (filename, session["user_id"])
+        )
+
+        connection.commit()
+
+        if user and user["profile_photo"]:
+            old_path = os.path.join(
+                PROFILE_FOLDER,
+                user["profile_photo"]
+            )
+
+            if os.path.exists(old_path):
+                os.remove(old_path)
+
+        cursor.close()
+        connection.close()
+
+        return jsonify({
+            "message": "Profile photo uploaded successfully!",
+            "status": "success",
+            "photo_url": f"http://localhost:5000/profile-photos/{filename}"
+        }), 200
+
+    except Exception:
+        app.logger.exception("Profile photo upload failed")
+
+        return jsonify({
+            "error": "Could not upload profile photo"
+        }), 500
 
 
+# Display Profile Photo
+@app.route("/profile-photos/<filename>", methods=["GET"])
+def get_profile_photo(filename):
+    return send_from_directory(
+        PROFILE_FOLDER,
+        filename
+    )
+# Remove Profile Photo API
+@app.route("/remove-profile-photo", methods=["DELETE"])
+def remove_profile_photo():
+
+    if "user_id" not in session:
+        return jsonify({"error": "Please login first"}), 401
+
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT profile_photo FROM users WHERE id = %s",
+            (session["user_id"],)
+        )
+
+        user = cursor.fetchone()
+
+        if user and user["profile_photo"]:
+            old_path = os.path.join(
+                PROFILE_FOLDER,
+                user["profile_photo"]
+            )
+
+            if os.path.exists(old_path):
+                os.remove(old_path)
+
+        cursor.execute(
+            "UPDATE users SET profile_photo = NULL WHERE id = %s",
+            (session["user_id"],)
+        )
+
+        connection.commit()
+
+        return jsonify({
+            "message": "Profile photo removed successfully!",
+            "status": "success"
+        }), 200
+
+    except Exception:
+        app.logger.exception("Profile photo removal failed")
+
+        return jsonify({
+            "error": "Could not remove profile photo"
+        }), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if connection and connection.is_connected():
+            connection.close()
 # Logout API
 @app.route("/logout", methods=["POST"])
 def logout():
