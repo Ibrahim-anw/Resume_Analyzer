@@ -5,6 +5,7 @@ import "./App.css";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Results from "./components/Results";
+import BulletRewriter from "./components/BulletRewriter";
 
 const API_URL = "http://localhost:5000/analyze";
 const BACKEND_URL = "http://localhost:5000";
@@ -698,85 +699,89 @@ function App() {
               </p>
             )}
 
-            {editingProfile ? (
-              <form
-                className="profile-edit-form"
-                onSubmit={handleSaveProfile}
-              >
-                <label htmlFor="updatedName">
-                  Change Your Name
-                </label>
+           
+<div className="profile-management-actions">
 
-                <input
-                  id="updatedName"
-                  type="text"
-                  value={updatedName}
-                  onChange={(event) => {
-                    setUpdatedName(event.target.value);
-                    setProfileError("");
-                  }}
-                  placeholder="Enter your name"
-                  maxLength={100}
-                  required
-                />
+  {editingProfile ? (
+    <form
+      className="profile-edit-form"
+      onSubmit={handleSaveProfile}
+    >
+      <label htmlFor="updatedName">Change Your Name</label>
 
-                {profileError && (
-                  <p className="profile-error-message">
-                    {profileError}
-                  </p>
-                )}
+      <input
+        id="updatedName"
+        type="text"
+        value={updatedName}
+        onChange={(event) => {
+          setUpdatedName(event.target.value);
+          setProfileError("");
+        }}
+        placeholder="Enter your name"
+        maxLength={100}
+        required
+      />
 
-                <div className="profile-actions">
-                  <button
-                    type="submit"
-                    className="profile-save-button"
-                    disabled={profileLoading}
-                  >
-                    {profileLoading ? "Saving..." : "Save Changes"}
-                  </button>
+      {profileError && (
+        <p className="profile-error-message">
+          {profileError}
+        </p>
+      )}
 
-                  <button
-                    type="button"
-                    className="profile-cancel-button"
-                    onClick={handleCancelEdit}
-                    disabled={profileLoading}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <button
-                type="button"
-                className="edit-profile-button"
-                onClick={handleEditProfile}
-              >
-                Edit Profile
-              </button>
-            )}
+      <div className="profile-actions">
+        <button
+          type="submit"
+          className="profile-save-button"
+          disabled={profileLoading}
+        >
+          {profileLoading ? "Saving..." : "Save Changes"}
+        </button>
 
-            {passwordMessage && (
-              <p className="password-success-message">
-                {passwordMessage}
-              </p>
-            )}
+        <button
+          type="button"
+          className="profile-cancel-button"
+          onClick={handleCancelEdit}
+          disabled={profileLoading}
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  ) : (
+    <button
+      type="button"
+      className="edit-profile-button"
+      onClick={handleEditProfile}
+    >
+      Edit Profile
+    </button>
+  )}
 
-            <button
-              type="button"
-              className="change-password-button"
-              onClick={() => {
-                setShowPasswordForm(!showPasswordForm);
-                setPasswordError("");
-                setPasswordMessage("");
-                setCurrentPassword("");
-                setNewPassword("");
-                setConfirmPassword("");
-              }}
-            >
-              {showPasswordForm
-                ? "Cancel Password Change"
-                : "Change Password"}
-            </button>
+  <button
+    type="button"
+    className="change-password-button"
+    onClick={() => {
+      setShowPasswordForm(!showPasswordForm);
+      setPasswordError("");
+      setPasswordMessage("");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }}
+  >
+    {showPasswordForm
+      ? "Cancel Password Change"
+      : "Change Password"}
+  </button>
+
+</div>
+
+{passwordMessage && (
+  <p className="password-success-message">
+    {passwordMessage}
+  </p>
+)}
+
 
             {showPasswordForm && (
               <form
@@ -992,6 +997,7 @@ function App() {
             </button>
           </div>
         )}
+        <BulletRewriter />
 
       </main>
     </div>
