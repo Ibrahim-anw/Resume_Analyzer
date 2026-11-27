@@ -1,0 +1,202 @@
+.bullet-rewriter {
+  width: 96%;
+  max-width: 1600px;
+  margin: 45px auto;
+  padding: 32px clamp(20px, 3vw, 55px);
+  color: #e8f3ff;
+  box-sizing: border-box;
+}
+
+.rewriter-heading {
+  text-align: left;
+  margin-bottom: 28px;
+}
+
+.rewriter-heading span {
+  display: inline-block;
+  color: #16c7d9;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 8px 14px;
+  background: rgba(22, 199, 217, 0.10);
+  border: 1px solid rgba(22, 199, 217, 0.2);
+  border-radius: 30px;
+}
+
+.rewriter-heading h2 {
+  color: #e8f3ff;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 15px 0 10px;
+}
+
+.rewriter-heading p {
+  color: #9aabc0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.rewriter-card {
+  width: 100%;
+  background: linear-gradient(145deg, #14243a, #0b1729);
+  border: 1px solid #263b56;
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
+  transition: border-color 0.25s ease;
+}
+
+.rewriter-card:hover {
+  border-color: #287d91;
+}
+
+.rewriter-card label {
+  display: block;
+  color: #e8f3ff;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.rewriter-card textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 18px;
+  background: #091426;
+  border: 1px solid #30435e;
+  border-radius: 12px;
+  outline: none;
+  resize: vertical;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.7;
+  color: #e8f3ff;
+  box-sizing: border-box;
+  transition: 0.25s;
+}
+
+.rewriter-card textarea::placeholder {
+  color: #71849d;
+}
+
+.rewriter-card textarea:focus {
+  border-color: #16c7d9;
+  box-shadow: 0 0 0 3px rgba(22, 199, 217, 0.12);
+}
+
+.character-count {
+  text-align: right;
+  color: #9aabc0;
+  font-size: 12px;
+  margin-top: 9px;
+}
+
+.rewrite-button {
+  width: 100%;
+  margin-top: 22px;
+  padding: 15px;
+  border: 1px solid #168cae;
+  border-radius: 11px;
+  background: linear-gradient(110deg, #087f9b, #1555b8);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.rewrite-button:hover:not(:disabled) {
+  background: linear-gradient(110deg, #0a9bb5, #246cdb);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(8, 145, 178, 0.2);
+}
+
+.rewrite-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rewriter-error {
+  color: #ff8795;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.rewritten-result {
+  margin-top: 28px;
+  padding: 26px;
+  background: #101f2d;
+  border: 1px solid rgba(0, 214, 143, 0.25);
+  border-left: 4px solid #00d68f;
+  border-radius: 15px;
+}
+
+.rewritten-result h3 {
+  color: #00d68f;
+  font-size: 17px;
+  margin-bottom: 13px;
+}
+
+.rewritten-result p {
+  color: #d3e2f1;
+  line-height: 1.8;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.rewritten-result button {
+  margin-top: 18px;
+  padding: 11px 22px;
+  background: rgba(22, 199, 217, 0.12);
+  color: #64dce8;
+  border: 1px solid #247b91;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.rewritten-result button:hover {
+  background: rgba(22, 199, 217, 0.22);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 850px) {
+  .bullet-rewriter {
+    width: 100%;
+    padding: 25px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bullet-rewriter {
+    width: 100%;
+    margin: 25px auto;
+    padding: 15px;
+  }
+
+  .rewriter-heading {
+    text-align: center;
+  }
+
+  .rewriter-heading h2 {
+    font-size: 22px;
+  }
+
+  .rewriter-heading p {
+    font-size: 13px;
+  }
+
+  .rewriter-card {
+    padding: 20px;
+  }
+
+  .rewriter-card textarea {
+    min-height: 150px;
+  }
+
+  .rewritten-result {
+    padding: 19px;
+  }
+}
