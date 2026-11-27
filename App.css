@@ -827,3 +827,521 @@ button:disabled {
     transition: none !important;
   }
 }
+
+/* ===== PROFESSIONAL DARK AI THEME ===== */
+
+:root {
+  --primary: #16c7d9;
+  --primary-dark: #0891b2;
+  --background: #050b16;
+  --white: #111c2e;
+  --text: #e8f3ff;
+  --muted: #9aabc0;
+  --border: #26364d;
+  --green: #00d68f;
+}
+
+html,
+body,
+#root {
+  background: #050b16;
+  color: #e8f3ff;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 15% 30%, rgba(0, 174, 190, 0.13), transparent 40%),
+    radial-gradient(ellipse at 85% 15%, rgba(35, 76, 170, 0.16), transparent 40%),
+    #050b16;
+  color: #e8f3ff;
+}
+
+/* Navbar */
+
+.navbar {
+  background: rgba(8, 17, 32, 0.94);
+  border-bottom: 1px solid #26364d;
+  backdrop-filter: blur(14px);
+}
+
+.logo,
+.profile-info h2 {
+  color: #f0f7ff;
+}
+
+.navbar a {
+  color: #a9bad0;
+}
+
+.navbar a:hover {
+  color: #16c7d9;
+}
+
+/* Hero and headings */
+
+.hero {
+  background: transparent;
+}
+
+.hero h1,
+.dashboard-heading h2,
+.results-area > h2,
+.suggestions-heading h2 {
+  color: #eaf6ff;
+}
+
+.hero h1 span,
+.eyebrow,
+.suggestions-heading span {
+  color: #16c7d9;
+}
+
+.hero p,
+.dashboard-heading p,
+.suggestions-heading p {
+  color: #9aabc0;
+}
+
+/* Main cards */
+
+.upload-box,
+.job-box,
+.result-item,
+.required-skills,
+.result-required,
+.suggestions-section,
+.profile-card,
+.result-score {
+  background: linear-gradient(145deg, #14243a, #0c1729);
+  border: 1px solid #263b56;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
+  color: #e8f3ff;
+}
+
+.upload-box h3,
+.job-box h3,
+.result-item h3,
+.required-skills h3,
+.result-required h3 {
+  color: #e8f3ff;
+}
+
+.upload-box p,
+.job-box p,
+.result-score p,
+.profile-info p,
+.profile-details {
+  color: #9aabc0;
+}
+
+/* Upload area */
+
+.upload-icon {
+  background: rgba(22, 199, 217, 0.07);
+  border: 2px dashed #247b91;
+  color: #36d5e4;
+}
+
+.upload-button,
+.get-started,
+.analyze-button,
+.photo-upload-button,
+.edit-profile-button,
+.change-password-button,
+.profile-save-button,
+.password-save-button {
+  background: linear-gradient(110deg, #087f9b, #1555b8);
+  color: #ffffff;
+}
+
+.upload-button:hover,
+.get-started:hover,
+.analyze-button:hover:not(:disabled) {
+  background: linear-gradient(110deg, #0a9bb5, #246cdb);
+}
+
+/* Text areas and inputs */
+
+.job-box textarea,
+.profile-edit-form input,
+.change-password-form input {
+  background: #091426;
+  border: 1px solid #30435e;
+  color: #e8f3ff;
+}
+
+.job-box textarea::placeholder,
+.profile-edit-form input::placeholder,
+.change-password-form input::placeholder {
+  color: #71849d;
+}
+
+.job-box textarea:focus,
+.profile-edit-form input:focus,
+.change-password-form input:focus {
+  border-color: #16c7d9;
+  box-shadow: 0 0 0 3px rgba(22, 199, 217, 0.12);
+}
+
+/* Score */
+
+.result-score span {
+  color: #a9bad0;
+}
+
+.result-score strong {
+  color: #16c7d9;
+  border-color: #16c7d9;
+  border-left-color: #24445b;
+}
+
+/* Skills */
+
+.result-tags span {
+  background: rgba(0, 214, 143, 0.13);
+  color: #58e8b2;
+  border: 1px solid rgba(0, 214, 143, 0.16);
+}
+
+.result-item:nth-child(2) .result-tags span {
+  background: rgba(255, 110, 125, 0.12);
+  color: #ff9ca8;
+  border-color: rgba(255, 110, 125, 0.18);
+}
+
+.required-skills .result-tags span,
+.result-required .result-tags span {
+  background: rgba(22, 199, 217, 0.12);
+  color: #6ce2ed;
+  border-color: rgba(22, 199, 217, 0.18);
+}
+
+.result-item li,
+.suggestion-card p {
+  color: #b7c7da;
+}
+
+.suggestion-card {
+  border-top-color: #26364d;
+}
+
+.suggestion-number {
+  background: rgba(22, 199, 217, 0.13);
+  color: #5cdeea;
+}
+
+/* PDF and profile buttons */
+
+.download-button {
+  background: linear-gradient(110deg, #008b70, #00b987);
+  color: white;
+}
+
+.download-button:hover {
+  background: #00a77e;
+}
+
+.remove-photo-button {
+  background: rgba(255, 100, 115, 0.15);
+  color: #ff9ca8;
+}
+
+/* Messages */
+
+.auth-message,
+.profile-error-message,
+.password-error-message,
+.rewriter-error {
+  color: #ff8795;
+}
+
+.loading-message {
+  color: #35d5e4;
+}
+
+.profile-success-message,
+.password-success-message {
+  color: #4ce5aa;
+}
+
+/* Smooth appearance */
+
+.upload-box,
+.job-box,
+.result-item,
+.result-score,
+.suggestions-section,
+.profile-card {
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.upload-box:hover,
+.job-box:hover,
+.result-item:hover {
+  border-color: #287d91;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .navbar {
+    background: #081120;
+  }
+
+  .upload-box,
+  .job-box,
+  .result-item,
+  .required-skills,
+  .result-required,
+  .suggestions-section,
+  .profile-card {
+    background: #111c2e;
+  }
+}
+
+/* ===== PROFILE CARD PROFESSIONAL LAYOUT ===== */
+
+.profile-section {
+  width: 100%;
+  padding: 35px 24px;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  align-items: center;
+  gap: 38px;
+  border: 1px solid rgba(80, 160, 190, 0.25);
+  border-radius: 22px;
+  background: linear-gradient(135deg, #14243a, #0b1729);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+.profile-photo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 22px 15px;
+  border: 1px solid #29445e;
+  border-radius: 18px;
+  background: rgba(7, 19, 36, 0.65);
+}
+
+.profile-avatar {
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #087f9b, #16c7d9);
+  color: white;
+  font-size: 42px;
+  font-weight: 700;
+  border: 4px solid rgba(22, 199, 217, 0.35);
+}
+
+.profile-photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+}
+
+.profile-info h2 {
+  color: #f0f7ff;
+  font-size: 27px;
+  margin: 0;
+}
+
+.profile-info > p {
+  margin: 0;
+}
+
+.profile-label {
+  color: #16c7d9;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.profile-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: #a9bad0;
+  font-size: 13px;
+}
+
+/* Profile buttons */
+
+.profile-management-actions {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.photo-upload-button,
+.remove-photo-button,
+.edit-profile-button,
+.change-password-button {
+  min-height: 42px;
+  padding: 11px 19px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.photo-upload-button,
+.edit-profile-button {
+  background: linear-gradient(110deg, #087f9b, #1555b8);
+  color: #fff;
+  border: 1px solid #168cae;
+}
+
+.change-password-button {
+  background: rgba(22, 199, 217, 0.10);
+  color: #64dce8;
+  border: 1px solid #247b91;
+}
+
+.remove-photo-button {
+  background: rgba(255, 100, 115, 0.12);
+  color: #ff9ca8;
+  border: 1px solid rgba(255, 100, 115, 0.3);
+}
+
+.photo-upload-button:hover,
+.edit-profile-button:hover,
+.change-password-button:hover,
+.remove-photo-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+/* Navbar alignment */
+
+.navbar {
+  min-height: 76px;
+  padding: 14px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.welcome-user {
+  color: #d8e8f7;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-btn {
+  min-width: 90px;
+  padding: 10px 18px;
+  border-radius: 9px;
+}
+
+/* Mobile responsive */
+
+@media (max-width: 650px) {
+  .profile-section {
+    padding: 20px 14px;
+  }
+
+  .profile-card {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 24px;
+  }
+
+  .profile-info {
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-details {
+    justify-content: center;
+  }
+
+  .profile-management-actions {
+    justify-content: center;
+  }
+
+  .navbar {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+  }
+
+  .nav-auth {
+    gap: 12px;
+  }
+
+  .welcome-user {
+    font-size: 12px;
+  }
+}
+
+/* FULL WIDTH DASHBOARD LAYOUT */
+
+.analyzer-dashboard,
+.results-area,
+.suggestions-section {
+  width: 96%;
+  max-width: 1600px;
+}
+
+.results-area {
+  margin: 0 auto 50px;
+  padding: 0;
+}
+
+.results-preview {
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (min-width: 1600px) {
+  .analyzer-dashboard,
+  .results-area,
+  .suggestions-section {
+    width: 94%;
+  }
+}
+
+@media (max-width: 600px) {
+  .analyzer-dashboard,
+  .results-area,
+  .suggestions-section {
+    width: 94%;
+  }
+}
