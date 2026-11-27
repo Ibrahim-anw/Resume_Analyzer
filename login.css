@@ -1,66 +1,258 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
 .login-container {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #f3e8ff, #ffffff);
-  padding: 20px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 43.75% 56.25%;
+  background: #050b16;
+  font-family: 'Inter', sans-serif;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  color: #e8f3ff;
+}
+
+.login-container::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 43.75%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 15% 25%, rgba(22, 199, 217, 0.24), transparent 45%),
+    radial-gradient(ellipse at 85% 80%, rgba(35, 76, 170, 0.30), transparent 45%),
+    linear-gradient(145deg, #10243b, #071426);
+  border-right: 1px solid #263b56;
+  z-index: 0;
+}
+
+.login-container::after {
+  content: "Resume Analyzer";
+  position: absolute;
+  top: 65px;
+  left: 5.6%;
+  color: #f0f7ff;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  z-index: 2;
 }
 
 .login-form {
+  grid-column: 2;
+  align-self: center;
+  justify-self: center;
+  position: relative;
+  z-index: 2;
   width: 100%;
-  max-width: 420px;
-  background: white;
-  padding: 40px 35px;
-  border-radius: 18px;
-  box-shadow: 0 10px 35px rgba(80, 40, 130, 0.12);
-  text-align: center;
+  max-width: 490px;
+  padding: 35px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
 }
 
 .login-form h1 {
-  color: #7135b5;
-  font-size: 30px;
+  color: #e8f3ff;
+  font-size: 31px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
   margin-bottom: 10px;
 }
 
 .login-form p {
-  color: #777;
-  margin-bottom: 25px;
+  color: #9aabc0;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 9px;
+  color: #dce9f7;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .login-form input {
+  display: block;
   width: 100%;
-  padding: 14px;
-  margin-bottom: 18px;
-  border: 1px solid #ddd;
-  border-radius: 9px;
+  padding: 15px 16px;
+  margin-bottom: 21px;
+  border: 1px solid #30435e;
+  border-radius: 10px;
   outline: none;
-  font-size: 15px;
-  box-sizing: border-box;
+  background: #091426;
+  color: #e8f3ff;
+  font-size: 14px;
+  transition: all 0.25s ease;
 }
 
 .login-form input:focus {
-  border-color: #8b45d0;
+  border-color: #16c7d9;
+  box-shadow: 0 0 0 3px rgba(22, 199, 217, 0.12);
+}
+
+.login-form input::placeholder {
+  color: #71849d;
 }
 
 .login-form button {
+  display: block;
   width: 100%;
-  padding: 14px;
-  background: #793bc0;
+  padding: 15px;
+  margin-top: 28px;
+  border: 1px solid #168cae;
+  border-radius: 10px;
+  background: linear-gradient(110deg, #087f9b, #1555b8);
   color: white;
-  border: none;
-  border-radius: 9px;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.login-form button:hover {
-  background: #602b9e;
+.login-form button:hover:not(:disabled) {
+  background: linear-gradient(110deg, #0a9bb5, #246cdb);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(8, 145, 178, 0.22);
+}
+
+.login-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .login-form a {
-  color: #793bc0;
+  color: #16c7d9;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 700;
+}
+
+.login-form a:hover {
+  color: #64dce8;
+  text-decoration: underline;
+}
+
+.login-container .login-form::before {
+  content: "Land the interview\A with a sharper\A resume.";
+  white-space: pre-line;
+  position: fixed;
+  left: 5.6%;
+  top: 35%;
+  width: 35%;
+  color: #f0f7ff;
+  font-size: clamp(29px, 3.5vw, 45px);
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: -1.4px;
+  pointer-events: none;
+}
+
+.login-container .login-form::after {
+  content: "Match your resume against any job description, see missing skills, and get clear next steps.\A\A\A AI-powered career assistant";
+  white-space: pre-line;
+  position: fixed;
+  left: 5.6%;
+  top: 59%;
+  width: 34%;
+  color: #a9bfd4;
+  font-size: 15px;
+  line-height: 1.8;
+  pointer-events: none;
+}
+
+.login-form .login-message {
+  margin: 15px 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.login-form .login-message.success {
+  color: #4ce5aa;
+}
+
+.login-form .login-message.error {
+  color: #ff8795;
+}
+
+.login-form .login-message.info {
+  color: #35d5e4;
+}
+
+.login-form .register-text {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 13px;
+  color: #9aabc0;
+}
+
+@media (max-width: 750px) {
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 35px 18px;
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(0, 174, 190, 0.13), transparent 40%),
+      #050b16;
+  }
+
+  .login-container::before {
+    display: none;
+  }
+
+  .login-container::after {
+    content: "Resume Analyzer";
+    position: static;
+    display: block;
+    color: #16c7d9;
+    font-size: 23px;
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .login-form {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 30px 23px;
+    background: linear-gradient(145deg, #14243a, #0b1729);
+    border: 1px solid #263b56;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+  }
+
+  .login-form::before,
+  .login-form::after {
+    display: none;
+  }
+
+  .login-form h1 {
+    font-size: 26px;
+  }
+
+  .login-form p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 380px) {
+  .login-form {
+    padding: 25px 18px;
+  }
+
+  .login-form h1 {
+    font-size: 23px;
+  }
 }
